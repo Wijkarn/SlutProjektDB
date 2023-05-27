@@ -1,10 +1,9 @@
-package org.example;
+package models;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
-
 import java.sql.*;
 
-public abstract class Model {
+public abstract class DBConn {
     private static MysqlDataSource dataSource;
 
     static String url = "localhost";
@@ -13,7 +12,7 @@ public abstract class Model {
     static String username = "root";
     static String password = "Omegalul69";
 
-    protected Model() {
+    protected DBConn() {
 
     }
 

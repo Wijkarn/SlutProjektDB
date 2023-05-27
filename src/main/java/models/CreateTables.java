@@ -1,13 +1,13 @@
-package org.example;
+package models;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class CreateTables extends Model {
+public class CreateTables extends DBConn {
 
     public static void createTables() throws SQLException {
-        Connection connection = Model.getConnection();
+        Connection connection = DBConn.getConnection();
         createUsers(connection);
         createAccounts(connection);
         createTrans(connection);
@@ -53,7 +53,7 @@ public class CreateTables extends Model {
     public static void createTrans(Connection connection) {
         try {
             String query = """
-                    CREATE TABLE `users` (
+                    CREATE TABLE IF NOT EXISTS `users` (
                       `id` bigint unsigned NOT NULL AUTO_INCREMENT,
                       `personnummer` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
                       `email` varchar(50) NOT NULL,
