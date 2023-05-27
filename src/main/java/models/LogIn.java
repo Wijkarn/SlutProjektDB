@@ -27,7 +27,7 @@ public class LogIn extends DBConn {
                 String hashPassword = pw.getString("password");
 
                 if (Password.Verify(password, hashPassword)) {
-                    String idQuery = "SELECT id FROM users WHERE personnummer = ?;";
+                    String idQuery = "SELECT id, name FROM users WHERE personnummer = ?;";
                     PreparedStatement getId = connection.prepareStatement(idQuery);
                     getId.setString(1, username);
 
@@ -35,8 +35,10 @@ public class LogIn extends DBConn {
                     if (result.next()) {
                         System.out.println("Login successful!");
                         int userId = result.getInt("id");
+                        String name = result.getString("name");
+                        System.out.println("Welcome " + name + "!");
                         connection.close();
-                        System.out.println(userId);
+                        //System.out.println(userId);
                         return userId;
                     } else {
                         failedLogIn(scan);
