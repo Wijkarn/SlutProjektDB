@@ -1,7 +1,6 @@
 package models;
 
 import java.sql.*;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class User {
@@ -115,15 +114,16 @@ public class User {
 
             System.out.println("Log In");
             System.out.println("Personnummer:");
-            String username = input.nextLine();
+            String personnummer = input.nextLine();
 
             System.out.println("Password:");
             String password = input.nextLine();
 
             Connection connection = DBConn.getConnection();
             PreparedStatement checkPw = connection.prepareStatement(checkPassword);
-            checkPw.setString(1, username);
+            checkPw.setString(1, personnummer);
             ResultSet pw = checkPw.executeQuery();
+            
             if (pw.next()) {
                 String hashPassword = pw.getString("password");
 

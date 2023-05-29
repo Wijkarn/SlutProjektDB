@@ -18,10 +18,9 @@ public class Menu extends DBConn{
                 case "1" -> {
                     User user = User.logIn();
                     if(user != null){
-                        new UserView().landingPage(user);
+                        new UserView().loginMenu(user);
                     }
                 }
-                //Add.addMenu(scan, User.login(scan));
                 case "2" ->
                     //Add.addMenu(scan, 0);
                         UserController.createUser(DBConn.getConnection());

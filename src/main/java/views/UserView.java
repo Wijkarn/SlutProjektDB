@@ -31,19 +31,16 @@ public class UserView {
         return user;
     }
 
-    public void landingPage(User user) {
+    public void loginMenu(User user) {
 
         while (true) {
             System.out.println("What do you want to do?\n1: Add account\n2: Make a transaction\n3: Change user credentials\n4: Log out");
 
             switch (new Scanner(System.in).nextLine()) {
                 case "1" -> {
-                    System.out.println("Add account skapad!");
+                    System.out.println("Add account!");
                     Account.addAccount(user);
                 }
-                //case "2" ->
-                //Add.addMenu(scan, 0);
-                // UserController.createUser(DBConn.getConnection());
                 case "4" -> {
                     return;
                 }
