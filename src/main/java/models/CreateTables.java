@@ -17,14 +17,17 @@ public class CreateTables extends DBConn {
     public static void createUsers(Connection connection) {
         try {
             String query = """
-                    CREATE TABLE IF NOT EXISTS `accounts` (
+                    CREATE TABLE IF NOT EXISTS `users` (
                       `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-                      `owner_id` int NOT NULL,
+                      `personnummer` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+                      `email` varchar(50) NOT NULL,
+                      `phone` varchar(20) NOT NULL,
+                      `password` varchar(100) NOT NULL,
+                      `address` varchar(100) NOT NULL,
+                      `name` varchar(50) NOT NULL,
                       `created` datetime DEFAULT (now()),
-                      `balance` int NOT NULL,
-                      `account_id` int NOT NULL,
                       UNIQUE KEY `id` (`id`)
-                    )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;""";
+                    ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;""";
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
         } catch (SQLException e) {
@@ -37,12 +40,12 @@ public class CreateTables extends DBConn {
             String query = """
                     CREATE TABLE IF NOT EXISTS `accounts` (
                       `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-                      `owner_id` int NOT NULL,
+                      `owner_id` bigint unsigned NOT NULL,
                       `created` datetime DEFAULT (now()),
-                      `balance` int NOT NULL,
-                      `account_id` int NOT NULL,
+                      `balance` bigint unsigned NOT NULL,
+                      `account_number` varchar(20) NOT NULL,
                       UNIQUE KEY `id` (`id`)
-                    )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;""";
+                    ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;""";
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
         } catch (SQLException e) {
@@ -53,15 +56,12 @@ public class CreateTables extends DBConn {
     public static void createTrans(Connection connection) {
         try {
             String query = """
-                    CREATE TABLE IF NOT EXISTS `users` (
+                    CREATE TABLE IF NOT EXISTS `transactions` (
                       `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-                      `personnummer` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-                      `email` varchar(50) NOT NULL,
-                      `phone` varchar(20) NOT NULL,
-                      `password` varchar(100) NOT NULL,
-                      `address` varchar(100) NOT NULL,
-                      `name` varchar(50) NOT NULL,
-                      `created` datetime DEFAULT (now()),
+                      `receiver_account_id` int NOT NULL,
+                      `sender_account_id` int NOT NULL,
+                      `amount` int NOT NULL,
+                      `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                       UNIQUE KEY `id` (`id`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;""";
             Statement statement = connection.createStatement();

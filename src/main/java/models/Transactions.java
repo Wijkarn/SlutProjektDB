@@ -49,6 +49,6 @@ public class Transactions {
     }
 
     public Transaction(){
-        
+
     }
 }
