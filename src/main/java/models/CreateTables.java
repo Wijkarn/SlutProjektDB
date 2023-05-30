@@ -27,7 +27,7 @@ public class CreateTables extends DBConn {
                       `name` varchar(50) NOT NULL,
                       `created` datetime DEFAULT (now()),
                       UNIQUE KEY `id` (`id`)
-                    ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;""";
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;""";
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
         } catch (SQLException e) {
@@ -45,7 +45,7 @@ public class CreateTables extends DBConn {
                       `balance` bigint unsigned NOT NULL,
                       `account_number` varchar(20) NOT NULL,
                       UNIQUE KEY `id` (`id`)
-                    ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;""";
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;""";
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
         } catch (SQLException e) {
@@ -61,7 +61,7 @@ public class CreateTables extends DBConn {
                       `receiver_account_id` int NOT NULL,
                       `sender_account_id` int NOT NULL,
                       `amount` int NOT NULL,
-                      `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                      `date_sent` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                       UNIQUE KEY `id` (`id`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;""";
             Statement statement = connection.createStatement();

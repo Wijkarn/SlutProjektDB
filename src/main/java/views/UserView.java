@@ -3,6 +3,7 @@ package views;
 import java.util.Scanner;
 
 import models.Account;
+import models.Transactions;
 import models.User;
 
 public class UserView {
@@ -34,18 +35,24 @@ public class UserView {
     public void loginMenu(User user) {
 
         while (true) {
-            System.out.println("What do you want to do?\n1: Add account\n2: Make a transaction\n3: Change user credentials\n4: Log out");
+            System.out.println("What do you want to do?\n1: Add bank account\n2: Make a transaction\n3: Change user credentials\n4: Show transactions\n10: Log out");
 
             switch (new Scanner(System.in).nextLine()) {
-                case "1" -> {
-                    System.out.println("Add account!");
+                case "1":
                     Account.addAccount(user);
-                }
-                case "4" -> {
-                    return;
-                }
-            }
+                    break;
+                case "2":
+                    Transactions.makeTransaction(user);
+                    break;
+                case "3":
 
+                    break;
+                case "4":
+                    Transactions.showTransactions(user);
+                    break;
+                case "10":
+                    return;
+            }
         }
     }
 }

@@ -10,9 +10,4 @@ public class UserController {
         User user = UserView.getUserInput();
         user.add(connection);
     }
-
-  /*  public static void logIn(Connection connection){
-        User user = UserView.logInInput();
-        //user.logIn(connection);
-    }*/
 }
