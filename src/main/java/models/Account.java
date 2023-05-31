@@ -1,9 +1,6 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Scanner;
 
 public class Account {
@@ -85,6 +82,62 @@ public class Account {
             statement.setLong(3, balInt);
 
             statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void deleteAccount(User user) {
+        try {
+            if (getAccounts(user.getId(), true)) {
+                System.out.println("Which account do you want to delete?");
+                Scanner scan = new Scanner(System.in);
+                String accountId = scan.nextLine();
+                String query = "DELETE FROM accounts WHERE id = ? AND owner_id = ?";
+                Connection connection = DBConn.getConnection();
+                PreparedStatement prepStatement = connection.prepareStatement(query);
+                prepStatement.setInt(1, Integer.parseInt(accountId));
+                prepStatement.setInt(2, user.getId());
+                int rowsAffected = prepStatement.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    System.out.println("Successfully deleted account!");
+
+                } else {
+                    System.out.println("Delete unsuccessful!");
+                }
+            } else {
+                System.out.println("No accounts found!");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean getAccounts(int id, boolean owner) {
+        try {
+            String query = "SELECT * FROM accounts WHERE owner_id = ?;";
+            Connection connection = DBConn.getConnection();
+            PreparedStatement prepStatement = connection.prepareStatement(query);
+            prepStatement.setInt(1, id);
+
+            ResultSet res = prepStatement.executeQuery();
+
+            boolean accounts = false;
+            while (res.next()) {
+                int accountId = res.getInt("id");
+                long accountNr = res.getLong("account_number");
+
+                System.out.print("Id:" + accountId);
+                System.out.print(" Account nr:" + accountNr);
+                if (owner) {
+                    long bal = res.getLong("balance");
+                    System.out.println(" Balance:" + bal);
+                }
+
+                accounts = true;
+            }
+            return accounts;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

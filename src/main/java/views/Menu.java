@@ -4,12 +4,7 @@ import controllers.UserController;
 import models.DBConn;
 import models.User;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Scanner;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 
 public class Menu extends DBConn {
 

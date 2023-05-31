@@ -35,7 +35,7 @@ public class UserView {
     public void loginMenu(User user) {
 
         while (true) {
-            System.out.println("What do you want to do?\n1: Add bank account\n2: Make a transaction\n3: Change user credentials\n4: Show transactions\n10: Log out\n69: Delete user");
+            System.out.println("What do you want to do?\n1: Add bank account\n2: Make a transaction\n3: Change user credentials\n4: Show transactions\n5: Delete bank account\n10: Log out\n69: Delete user");
 
             switch (new Scanner(System.in).nextLine().toLowerCase()) {
                 case "1":
@@ -50,6 +50,9 @@ public class UserView {
                 case "4":
                     Transactions.selectTransactionsBetweenDates(user);
                     break;
+                case "5":
+                    Account.deleteAccount(user);
+                    break;
                 case "10":
                     return;
                 case "69":
@@ -60,11 +63,11 @@ public class UserView {
         }
     }
 
-    private void userChangeMenu(User user){
-        while (true){
+    private void userChangeMenu(User user) {
+        while (true) {
             Scanner scan = new Scanner(System.in);
             System.out.println("What do you want to change?\n1: Phone nr\n2: Address\n3: Email\n4: Password");
-            switch (scan.nextLine()){
+            switch (scan.nextLine()) {
                 case "1":
                     User.changeInfo("phone", user);
                     break;
@@ -74,7 +77,7 @@ public class UserView {
                 case "3":
                     User.changeInfo("email", user);
                     break;
-                case"4":
+                case "4":
                     User.changeInfo("password", user);
                     break;
             }

@@ -71,12 +71,12 @@ public class Transactions {
             int transAmount = Integer.parseInt(scan.nextLine());
 
             System.out.println("Who do you want to send to? (user id)");
-            if (getAccounts(Integer.parseInt(scan.nextLine()), true)) {
+            if (Account.getAccounts(Integer.parseInt(scan.nextLine()), true)) {
                 System.out.println("To what account? (id)");
                 int receiverAccountId = Integer.parseInt(scan.nextLine());
 
                 System.out.println("From what account? (id)");
-                if (getAccounts(user.getId(), false)) {
+                if (Account.getAccounts(user.getId(), false)) {
                     int senderAccount = Integer.parseInt(scan.nextLine());
 
                     String query = "INSERT INTO transactions (amount, receiver_account_id, sender_account_id) VALUES (?, ?, ?)";
@@ -104,34 +104,6 @@ public class Transactions {
 
     }
 
-    private static boolean getAccounts(int id, boolean owner) {
-        try {
-            String query = "SELECT * FROM accounts WHERE owner_id = ?;";
-            Connection connection = DBConn.getConnection();
-            PreparedStatement prepStatement = connection.prepareStatement(query);
-            prepStatement.setInt(1, id);
-
-            ResultSet res = prepStatement.executeQuery();
-
-            boolean accounts = false;
-            while (res.next()) {
-                int accountId = res.getInt("id");
-                long accountNr = res.getLong("account_number");
-
-                System.out.print("Id:" + accountId);
-                System.out.print(" Account nr:" + accountNr);
-                if (owner) {
-                    long bal = res.getLong("balance");
-                    System.out.println(" Balance:" + bal);
-                }
-
-                accounts = true;
-            }
-            return accounts;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
     public static void updateBal(int amount, int accountId) {
         try {
             String query = "UPDATE accounts SET balance = (balance + ?) WHERE id = ?;";
@@ -154,7 +126,7 @@ public class Transactions {
         try {
             System.out.println("Which account do want to see your history?");
 
-            if (getAccounts(user.getId(), true)) {
+            if (Account.getAccounts(user.getId(), true)) {
                 Scanner scan = new Scanner(System.in);
                 int accountId = scan.nextInt();
                 System.out.println("Start date YYYYMMDD");
@@ -187,7 +159,6 @@ public class Transactions {
                             System.out.println("Your account id: " + accountId);
                             System.out.println("Receiver account id: " + receiverId);
                             System.out.println("----------------");
-                            // ... Print other column values or perform desired processing
                         }
 
                         resultSet.close();
