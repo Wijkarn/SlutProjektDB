@@ -9,14 +9,6 @@ import java.sql.*;
 
 public abstract class DBConn {
     private static MysqlDataSource dataSource;
-/*
-    static String url = "localhost";
-    static int port = 3306;
-    static String database = "SlutProjekt";
-    static String username = "root";
-    static String password = "Omegalul69";
-    */
-
     static String url = "";
     static int port = 0;
     static String database = "";

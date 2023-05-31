@@ -35,14 +35,14 @@ public class UserView {
     public void loginMenu(User user) {
 
         while (true) {
-            System.out.println("What do you want to do?\n1: Add bank account\n2: Make a transaction\n3: Change user credentials\n4: Show transactions\n5: Delete bank account\n10: Log out\n69: Delete user");
+            System.out.println("What do you want to do?\n1: Make a transaction\n2: Add bank account\n3: Change user credentials\n4: Show transactions\n5: Delete bank account\n10: Log out\n69: Delete user");
 
             switch (new Scanner(System.in).nextLine().toLowerCase()) {
                 case "1":
-                    Account.addAccount(user);
+                    Transactions.makeTransaction(user);
                     break;
                 case "2":
-                    Transactions.makeTransaction(user);
+                    Account.addAccount(user);
                     break;
                 case "3":
                     userChangeMenu(user);
