@@ -13,6 +13,7 @@ public class Account {
     private long balance;
     private String accountNumber;
     private Timestamp created;
+
     public int getAccountId() {
         return accountId;
     }
@@ -53,11 +54,11 @@ public class Account {
         this.created = created;
     }
 
-    public Account(){
+    public Account() {
 
     }
 
-    public Account(int accountId, int ownerId, int balance, String accountNumber, Timestamp created){
+    public Account(int accountId, int ownerId, int balance, String accountNumber, Timestamp created) {
         this.accountId = accountId;
         this.ownerId = ownerId;
         this.balance = balance;
@@ -84,6 +85,22 @@ public class Account {
             statement.setLong(3, balInt);
 
             statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void deleteAllAccounts(User user) {
+        try {
+            String query = "DELETE FROM accounts WHERE owner_id = ?";
+            Connection connection = DBConn.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, user.getId());
+            statement.executeUpdate();
+
+            statement.close();
+            connection.close();
+            System.out.println("Successfully deleted all bank accounts!");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -98,7 +98,6 @@ public class Transactions {
             } else {
                 System.out.println("User has no accounts!");
             }
-            //Transactions transaction = new Transactions();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -151,7 +150,7 @@ public class Transactions {
         }
     }
 
-    public static void selectDataBetweenDates(User user) {
+    public static void selectTransactionsBetweenDates(User user) {
         try {
             System.out.println("Which account do want to see your history?");
 
@@ -160,9 +159,10 @@ public class Transactions {
                 int accountId = scan.nextInt();
                 System.out.println("Start date YYYYMMDD");
                 LocalDate startDate = getDateObj();
-                System.out.println("End date YYYYMMDD");
-                LocalDate endDate = getDateObj();
+
                 if (startDate != null) {
+                    System.out.println("End date YYYYMMDD");
+                    LocalDate endDate = getDateObj();
                     if (endDate != null) {
 
                         Connection connection = DBConn.getConnection();
@@ -211,7 +211,7 @@ public class Transactions {
         Scanner scan = new Scanner(System.in);
         String userInput = scan.nextLine();
 
-        if (userInput.length() >= 8) {
+        if (userInput.length() >= 8 && !userInput.matches(".*[a-z].*")) {
             String fullDate = userInput.replace("-", "");
             fullDate = fullDate.replace("/", "");
             int year = Integer.parseInt(fullDate.substring(0, 4));

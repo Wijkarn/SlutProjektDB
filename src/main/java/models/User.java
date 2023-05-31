@@ -156,4 +156,60 @@ public class User {
             throw new RuntimeException(e);
         }
     }
+
+    public static void deleteUser(User user) {
+        try {
+            System.out.println("Are you sure you want to delete your user account and all other data in your account? Y/N WARNING THIS CAN NOT BE UNDONE!");
+            Scanner scan = new Scanner(System.in);
+            if ("y".equalsIgnoreCase(scan.nextLine())) {
+                String query = "DELETE FROM users WHERE id = ?";
+                Connection connection = DBConn.getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setInt(1, user.getId());
+                statement.executeUpdate();
+
+                statement.close();
+                connection.close();
+                System.out.println("Successfully deleted user account!");
+            } else {
+                System.out.println("Delete aborted!");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void changeInfo(String choice, User user) {
+        try {
+            System.out.println("Are you sure you want to delete " + choice + "?");
+            Scanner scan = new Scanner(System.in);
+            if("y".equalsIgnoreCase(scan.nextLine())) {
+                System.out.println("New " + choice + ":");
+                String newData = scan.nextLine();
+
+                String query = "UPDATE users SET " + choice + " = ? WHERE id=?;";
+                Connection connection = DBConn.getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+
+                if ("password".equalsIgnoreCase(choice)) {
+                    statement.setString(1, Password.hash(newData));
+                } else if ("phone".equalsIgnoreCase(choice)) {
+                    statement.setLong(1, Long.parseLong(newData));
+                } else {
+                    statement.setString(1, newData);
+                }
+                statement.setInt(2, user.getId());
+
+                statement.executeUpdate();
+
+                statement.close();
+                connection.close();
+                System.out.println("Successfully updated " + choice + "! New " + choice + ":" + newData);
+            }else{
+                System.out.println("Aborting update");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

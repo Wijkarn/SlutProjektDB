@@ -35,9 +35,9 @@ public class UserView {
     public void loginMenu(User user) {
 
         while (true) {
-            System.out.println("What do you want to do?\n1: Add bank account\n2: Make a transaction\n3: Change user credentials\n4: Show transactions\n10: Log out");
+            System.out.println("What do you want to do?\n1: Add bank account\n2: Make a transaction\n3: Change user credentials\n4: Show transactions\n10: Log out\n69: Delete user");
 
-            switch (new Scanner(System.in).nextLine()) {
+            switch (new Scanner(System.in).nextLine().toLowerCase()) {
                 case "1":
                     Account.addAccount(user);
                     break;
@@ -45,14 +45,38 @@ public class UserView {
                     Transactions.makeTransaction(user);
                     break;
                 case "3":
-
+                    userChangeMenu(user);
                     break;
                 case "4":
-                    //Transactions.showTransactions(user);
-                    Transactions.selectDataBetweenDates(user);
+                    Transactions.selectTransactionsBetweenDates(user);
                     break;
                 case "10":
                     return;
+                case "69":
+                    User.deleteUser(user);
+                    Account.deleteAllAccounts(user);
+                    return;
+            }
+        }
+    }
+
+    private void userChangeMenu(User user){
+        while (true){
+            Scanner scan = new Scanner(System.in);
+            System.out.println("What do you want to change?\n1: Phone nr\n2: Address\n3: Email\n4: Password");
+            switch (scan.nextLine()){
+                case "1":
+                    User.changeInfo("phone", user);
+                    break;
+                case "2":
+                    User.changeInfo("address", user);
+                    break;
+                case "3":
+                    User.changeInfo("email", user);
+                    break;
+                case"4":
+                    User.changeInfo("password", user);
+                    break;
             }
         }
     }
