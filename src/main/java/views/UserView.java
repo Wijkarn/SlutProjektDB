@@ -48,7 +48,8 @@ public class UserView {
 
                     break;
                 case "4":
-                    Transactions.showTransactions(user);
+                    //Transactions.showTransactions(user);
+                    Transactions.selectDataBetweenDates(user);
                     break;
                 case "10":
                     return;

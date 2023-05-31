@@ -90,8 +90,9 @@ public class User {
         return personnummer;
     }
 
-    public void add(Connection connection) {
+    public void add() {
         try {
+            Connection connection = DBConn.getConnection();
             String query = "INSERT INTO users (name, email, phone, address, password, personnummer) VALUES (?, ?, ?, ?, ?, ?);";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, name);
@@ -123,7 +124,7 @@ public class User {
             PreparedStatement checkPw = connection.prepareStatement(checkPassword);
             checkPw.setString(1, personnummer);
             ResultSet pw = checkPw.executeQuery();
-            
+
             if (pw.next()) {
                 String hashPassword = pw.getString("password");
 

@@ -1,6 +1,7 @@
 package models;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Transactions {
@@ -120,7 +121,7 @@ public class Transactions {
 
                 System.out.print("Id:" + accountId);
                 System.out.print(" Account nr:" + accountNr);
-                if(owner){
+                if (owner) {
                     long bal = res.getLong("balance");
                     System.out.println(" Balance:" + bal);
                 }
@@ -132,37 +133,6 @@ public class Transactions {
             throw new RuntimeException(e);
         }
     }
-
-    public static void showTransactions(User user) {
-        try {
-            System.out.println("Startdate:");
-            Scanner scan = new Scanner(System.in);
-            String start = scan.nextLine();
-            System.out.println("End date");
-            String end = scan.nextLine();
-
-            String query = "SELECT * FROM transactions WHERE sender_account_id = ? (SELECT date_sent FROM transactions WHERE date_sent >= ? AND date_sent < ?);";
-
-            Connection connection = DBConn.getConnection();
-            PreparedStatement prepStatement = connection.prepareStatement(query);
-
-            prepStatement.setInt(1, user.getId());
-            prepStatement.setString(2, start);
-            prepStatement.setString(3, end);
-
-            ResultSet res = prepStatement.executeQuery();
-            System.out.println(res);
-            while (res.next()) {
-                int bal = res.getInt("amount");
-                int receiver = res.getInt("receiver_account_id");
-                Timestamp date = res.getTimestamp("date");
-                System.out.println("Amount: " + bal + " Receiver: " + receiver + " Date: " + date);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static void updateBal(int amount, int accountId) {
         try {
             String query = "UPDATE accounts SET balance = (balance + ?) WHERE id = ?;";
@@ -179,5 +149,77 @@ public class Transactions {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void selectDataBetweenDates(User user) {
+        try {
+            System.out.println("Which account do want to see your history?");
+
+            if (getAccounts(user.getId(), true)) {
+                Scanner scan = new Scanner(System.in);
+                int accountId = scan.nextInt();
+                System.out.println("Start date YYYYMMDD");
+                LocalDate startDate = getDateObj();
+                System.out.println("End date YYYYMMDD");
+                LocalDate endDate = getDateObj();
+                if (startDate != null) {
+                    if (endDate != null) {
+
+                        Connection connection = DBConn.getConnection();
+                        String query = "SELECT * FROM transactions WHERE sender_account_id = ? AND date_sent BETWEEN ? AND ?";
+                        PreparedStatement statement = connection.prepareStatement(query);
+                        statement.setInt(1, accountId);
+                        statement.setObject(2, startDate);
+                        statement.setObject(3, endDate);
+                        ResultSet resultSet = statement.executeQuery();
+
+                        System.out.println("----------------");
+                        while (resultSet.next()) {
+                            int transactionId = resultSet.getInt("id");
+                            LocalDate dateSent = resultSet.getObject("date_sent", LocalDate.class);
+                            int amount = resultSet.getInt("amount");
+                            int receiverId = resultSet.getInt("receiver_account_id");
+
+
+                            System.out.println("Transaction ID: " + transactionId);
+                            System.out.println("Date Sent: " + dateSent);
+                            System.out.println("Amount: " + amount);
+                            System.out.println("Your account id: " + accountId);
+                            System.out.println("Receiver account id: " + receiverId);
+                            System.out.println("----------------");
+                            // ... Print other column values or perform desired processing
+                        }
+
+                        resultSet.close();
+                        statement.close();
+                        connection.close();
+                    } else {
+                        System.out.println("Invalid End Date!");
+                    }
+                } else {
+                    System.out.println("Invalid Start Date!");
+                }
+            } else {
+                System.out.println("No accounts found!");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static LocalDate getDateObj() {
+        Scanner scan = new Scanner(System.in);
+        String userInput = scan.nextLine();
+
+        if (userInput.length() >= 8) {
+            String fullDate = userInput.replace("-", "");
+            fullDate = fullDate.replace("/", "");
+            int year = Integer.parseInt(fullDate.substring(0, 4));
+            int month = Integer.parseInt(fullDate.substring(4, 6));
+            int day = Integer.parseInt(fullDate.substring(6, 8));
+
+            return LocalDate.of(year, month, day);
+        }
+        return null;
     }
 }
