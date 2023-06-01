@@ -2,8 +2,10 @@ package views;
 
 import java.util.Scanner;
 
+import controllers.AccountController;
+import controllers.TransactionsController;
+import controllers.UserController;
 import models.Account;
-import models.Transactions;
 import models.User;
 
 public class UserView {
@@ -39,19 +41,19 @@ public class UserView {
 
             switch (new Scanner(System.in).nextLine().toLowerCase()) {
                 case "1":
-                    Transactions.makeTransaction(user);
+                    TransactionsController.makeTransaction(user);
                     break;
                 case "2":
-                    Account.addAccount(user);
+                    AccountController.addAccount(user);
                     break;
                 case "3":
                     userChangeMenu(user);
                     break;
                 case "4":
-                    Transactions.selectTransactionsBetweenDates(user);
+                    TransactionsController.selectTransactionsBetweenDates(user);
                     break;
                 case "5":
-                    Account.deleteAccount(user);
+                    AccountController.deleteAccount(user);
                     break;
                 case "6":
                     viewCredentials(user);
@@ -59,8 +61,8 @@ public class UserView {
                 case "10":
                     return;
                 case "69":
-                    User.deleteUser(user);
-                    Account.deleteAllAccounts(user);
+                    UserController.deleteUser(user);
+                    AccountController.deleteAllAccounts(user);
                     return;
             }
         }
@@ -72,16 +74,16 @@ public class UserView {
             System.out.println("What do you want to change?\n1: Phone nr\n2: Address\n3: Email\n4: Password");
             switch (scan.nextLine()) {
                 case "1":
-                    User.changeInfo("phone", user);
+                    UserController.changeInfo("phone", user);
                     break;
                 case "2":
-                    User.changeInfo("address", user);
+                    UserController.changeInfo("address", user);
                     break;
                 case "3":
-                    User.changeInfo("email", user);
+                    UserController.changeInfo("email", user);
                     break;
                 case "4":
-                    User.changeInfo("password", user);
+                    UserController.changeInfo("password", user);
                     break;
             }
         }
@@ -96,7 +98,7 @@ public class UserView {
         System.out.println("Email: " + user.getEmail());
         System.out.println("User account created: " + user.getCreated());
         System.out.println("Bank accounts: ");
-        Account.getAccounts(user.getId(), true);
+        AccountController.getAccounts(user.getId(), true);
         System.out.println(" ");
     }
 }

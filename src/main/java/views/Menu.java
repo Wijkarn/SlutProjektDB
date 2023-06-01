@@ -16,7 +16,7 @@ public class Menu extends DBConn {
             String choice = scan.nextLine();
             switch (choice.toLowerCase()) {
                 case "1":
-                    User user = User.logIn();
+                    User user = UserController.logIn();
                     if (user != null) {
                         new UserView().loginMenu(user);
                     }
