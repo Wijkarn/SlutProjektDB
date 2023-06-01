@@ -129,10 +129,14 @@ public class Account {
                 long accountNr = res.getLong("account_number");
 
                 System.out.print("Id:" + accountId);
-                System.out.print(" Account nr:" + accountNr);
+
                 if (owner) {
+                    System.out.print(" Account nr:" + accountNr);
                     long bal = res.getLong("balance");
                     System.out.println(" Balance:" + bal);
+                }
+                else{
+                    System.out.println(" Account nr:" + accountNr);
                 }
 
                 accounts = true;

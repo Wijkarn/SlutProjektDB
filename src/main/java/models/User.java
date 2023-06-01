@@ -10,6 +10,7 @@ public class User {
     private String name;
     private String phone;
     private String address;
+
     private Timestamp created;
 
     private String personnummer;
@@ -88,6 +89,14 @@ public class User {
 
     public String getPersonnummer() {
         return personnummer;
+    }
+
+    public Timestamp getCreated() {
+        return created;
+    }
+
+    public void setCreated(Timestamp created) {
+        this.created = created;
     }
 
     public void add() {
@@ -183,7 +192,7 @@ public class User {
         try {
             System.out.println("Are you sure you want to delete " + choice + "?");
             Scanner scan = new Scanner(System.in);
-            if("y".equalsIgnoreCase(scan.nextLine())) {
+            if ("y".equalsIgnoreCase(scan.nextLine())) {
                 System.out.println("New " + choice + ":");
                 String newData = scan.nextLine();
 
@@ -205,7 +214,7 @@ public class User {
                 statement.close();
                 connection.close();
                 System.out.println("Successfully updated " + choice + "! New " + choice + ":" + newData);
-            }else{
+            } else {
                 System.out.println("Aborting update");
             }
         } catch (SQLException e) {

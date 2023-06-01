@@ -35,7 +35,7 @@ public class UserView {
     public void loginMenu(User user) {
 
         while (true) {
-            System.out.println("What do you want to do?\n1: Make a transaction\n2: Add bank account\n3: Change user credentials\n4: Show transactions\n5: Delete bank account\n10: Log out\n69: Delete user");
+            System.out.println("What do you want to do?\n1: Make a transaction\n2: Add bank account\n3: Change user credentials\n4: Show transactions\n5: Delete bank account\n6: View credentials\n10: Log out\n69: Delete user");
 
             switch (new Scanner(System.in).nextLine().toLowerCase()) {
                 case "1":
@@ -52,6 +52,9 @@ public class UserView {
                     break;
                 case "5":
                     Account.deleteAccount(user);
+                    break;
+                case "6":
+                    viewCredentials(user);
                     break;
                 case "10":
                     return;
@@ -82,5 +85,18 @@ public class UserView {
                     break;
             }
         }
+    }
+
+    private static void viewCredentials(User user) {
+        System.out.println("User id: " + user.getId());
+        System.out.println("Name: " + user.getName());
+        System.out.println("Address: " + user.getAddress());
+        System.out.println("Personnummer: " + user.getPersonnummer());
+        System.out.println("Phone nr: " + user.getPhone());
+        System.out.println("Email: " + user.getEmail());
+        System.out.println("User account created: " + user.getCreated());
+        System.out.println("Bank accounts: ");
+        Account.getAccounts(user.getId(), true);
+        System.out.println(" ");
     }
 }
