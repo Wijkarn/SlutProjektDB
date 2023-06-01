@@ -5,37 +5,35 @@ import java.util.Scanner;
 import controllers.AccountController;
 import controllers.TransactionsController;
 import controllers.UserController;
-import models.Account;
 import models.User;
 
 public class UserView {
     public static User getUserInput() {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scan = new Scanner(System.in);
         User user = new User();
 
         System.out.print("Name: ");
-        user.setName(scanner.nextLine());
+        user.setName(scan.nextLine());
 
         System.out.print("Personnummer: ");
-        user.setPersonnummer(scanner.nextLine());
+        user.setPersonnummer(scan.nextLine());
 
         System.out.print("Phone: ");
-        user.setPhone(scanner.nextLine());
+        user.setPhone(scan.nextLine());
 
         System.out.print("Email: ");
-        user.setEmail(scanner.nextLine());
+        user.setEmail(scan.nextLine());
 
         System.out.print("Address: ");
-        user.setAddress(scanner.nextLine());
+        user.setAddress(scan.nextLine());
 
         System.out.print("Password: ");
-        user.setPassword(scanner.nextLine());
+        user.setPassword(scan.nextLine());
 
         return user;
     }
 
     public void loginMenu(User user) {
-
         while (true) {
             System.out.println("What do you want to do?\n1: Make a transaction\n2: Add bank account\n3: Change user credentials\n4: Show transactions\n5: Delete bank account\n6: View credentials\n10: Log out\n69: Delete user");
 
@@ -59,8 +57,10 @@ public class UserView {
                     viewCredentials(user);
                     break;
                 case "10":
+                    // Logout
                     return;
                 case "69":
+                    // Delete user
                     UserController.deleteUser(user);
                     AccountController.deleteAllAccounts(user);
                     return;

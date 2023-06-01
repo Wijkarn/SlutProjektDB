@@ -61,5 +61,4 @@ public class Transactions {
         this.amount = amount;
         this.date = date;
     }
-
 }
