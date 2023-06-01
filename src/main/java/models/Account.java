@@ -134,8 +134,7 @@ public class Account {
                     System.out.print(" Account nr:" + accountNr);
                     long bal = res.getLong("balance");
                     System.out.println(" Balance:" + bal);
-                }
-                else{
+                } else {
                     System.out.println(" Account nr:" + accountNr);
                 }
 

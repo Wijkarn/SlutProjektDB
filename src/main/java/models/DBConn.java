@@ -21,7 +21,7 @@ public abstract class DBConn {
 
     private static void initializeDataSource() {
         try {
-            getInfo();
+            getInfoFromFile();
             dataSource = new MysqlDataSource();
             dataSource.setUser(username);
             dataSource.setPassword(password);
@@ -44,10 +44,11 @@ public abstract class DBConn {
         }
     }
 
-    public static void getInfo() {
+    public static void getInfoFromFile() {
         String filePath = "textfiles/logInInfo.txt";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
             url = reader.readLine();
             port = Integer.parseInt(reader.readLine());
             database = reader.readLine();
