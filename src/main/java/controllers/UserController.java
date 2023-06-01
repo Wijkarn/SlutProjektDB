@@ -81,7 +81,7 @@ public class UserController extends DBConn {
         }
     }
 
-    public static void deleteUser(User user) {
+    public static boolean deleteUser(User user) {
         try {
             System.out.println("Are you sure you want to delete your user account and all other data in your account? Y/N WARNING THIS CAN NOT BE UNDONE!");
             Scanner scan = new Scanner(System.in);
@@ -95,9 +95,11 @@ public class UserController extends DBConn {
                 statement.close();
                 connection.close();
                 System.out.println("Successfully deleted user account!");
+                return true;
             } else {
                 System.out.println("Delete aborted!");
             }
+            return false;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -117,10 +119,13 @@ public class UserController extends DBConn {
 
                 if ("password".equalsIgnoreCase(choice)) {
                     statement.setString(1, Password.hash(newData));
+                    changingInfoLocally(choice, user, Password.hash(newData));
                 } else if ("phone".equalsIgnoreCase(choice)) {
                     statement.setLong(1, Long.parseLong(newData));
+                    changingInfoLocally(choice, user, newData);
                 } else {
                     statement.setString(1, newData);
+                    changingInfoLocally(choice, user, newData);
                 }
                 statement.setInt(2, user.getId());
 
@@ -134,6 +139,23 @@ public class UserController extends DBConn {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void changingInfoLocally(String choice, User user, String newData) {
+        switch (choice) {
+            case "phone":
+                user.setPhone(newData);
+                break;
+            case "email":
+                user.setEmail(newData);
+                break;
+            case "password":
+                user.setPassword(newData);
+                break;
+            case "address":
+                user.setAddress(newData);
+                break;
         }
     }
 }

@@ -1,7 +1,6 @@
 package controllers;
 
 import database.DBConn;
-import models.Account;
 import models.User;
 
 import java.sql.Connection;
@@ -19,13 +18,13 @@ public class TransactionsController extends DBConn{
             Scanner scan = new Scanner(System.in);
             int transAmount = Integer.parseInt(scan.nextLine());
 
-            System.out.println("Who do you want to send to? (user id)");
-            if (AccountController.getAccounts(Integer.parseInt(scan.nextLine()), false)) {
+            System.out.println("Who do you want to send to? (user name)");
+            if (AccountController.getAllAccountsByName(scan.nextLine())) {
                 System.out.println("To what account? (id)");
                 int receiverAccountId = Integer.parseInt(scan.nextLine());
 
                 System.out.println("From what account? (id)");
-                if (AccountController.getAccounts(user.getId(), true)) {
+                if (AccountController.getAllAccountsById(user.getId(), true)) {
                     int senderAccount = Integer.parseInt(scan.nextLine());
                     boolean yeet = updateSenderBal(transAmount, senderAccount);
 
@@ -103,7 +102,7 @@ public class TransactionsController extends DBConn{
         try {
             System.out.println("Which account do want to see your history?");
 
-            if (AccountController.getAccounts(user.getId(), true)) {
+            if (AccountController.getAllAccountsById(user.getId(), true)) {
                 Scanner scan = new Scanner(System.in);
                 int accountId = scan.nextInt();
                 System.out.println("Start date YYYYMMDD");

@@ -61,9 +61,10 @@ public class UserView {
                     return;
                 case "69":
                     // Delete user
-                    UserController.deleteUser(user);
-                    AccountController.deleteAllAccounts(user);
-                    return;
+                    if (UserController.deleteUser(user)) {
+                        AccountController.deleteAllAccounts(user);
+                        return;
+                    }
             }
         }
     }
@@ -98,7 +99,7 @@ public class UserView {
         System.out.println("Email: " + user.getEmail());
         System.out.println("User account created: " + user.getCreated());
         System.out.println("Bank accounts: ");
-        AccountController.getAccounts(user.getId(), true);
+        AccountController.getAllAccountsById(user.getId(), true);
         System.out.println(" ");
     }
 }

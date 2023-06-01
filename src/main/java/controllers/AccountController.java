@@ -37,7 +37,7 @@ public class AccountController extends DBConn {
 
     public static void deleteAccount(User user) {
         try {
-            if (getAccounts(user.getId(), true)) {
+            if (getAllAccountsById(user.getId(), true)) {
                 System.out.println("Which account do you want to delete?");
                 Scanner scan = new Scanner(System.in);
                 String accountId = scan.nextLine();
@@ -62,7 +62,7 @@ public class AccountController extends DBConn {
         }
     }
 
-    public static boolean getAccounts(int id, boolean owner) {
+    public static boolean getAllAccountsById(int id, boolean owner) {
         try {
             String query = "SELECT * FROM accounts WHERE owner_id = ?;";
             Connection connection = DBConn.getConnection();
@@ -105,6 +105,31 @@ public class AccountController extends DBConn {
             statement.close();
             connection.close();
             System.out.println("Successfully deleted all bank accounts!");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean getAllAccountsByName(String name) {
+        try {
+            String query = "SELECT * FROM accounts WHERE owner_id IN (SELECT id FROM users WHERE name = ?)";
+            Connection connection = DBConn.getConnection();
+            PreparedStatement prepStatement = connection.prepareStatement(query);
+
+            prepStatement.setString(1, name);
+
+            ResultSet res = prepStatement.executeQuery();
+
+            boolean yeet = false;
+            while (res.next()) {
+                int accountId = res.getInt("id");
+                long accountNr = res.getLong("account_number");
+
+                System.out.print("Id:" + accountId);
+                System.out.println(" Account nr:" + accountNr);
+                yeet = true;
+            }
+            return yeet;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

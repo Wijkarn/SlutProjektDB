@@ -1,10 +1,8 @@
 package models;
 
 import database.DBConn;
-import hashing.Password;
 
 import java.sql.*;
-import java.util.Scanner;
 
 public class User extends DBConn {
     private int id;
@@ -101,5 +99,4 @@ public class User extends DBConn {
     public void setCreated(Timestamp created) {
         this.created = created;
     }
-
 }
