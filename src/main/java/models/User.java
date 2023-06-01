@@ -1,9 +1,12 @@
 package models;
 
+import database.DBConn;
+import hashing.Password;
+
 import java.sql.*;
 import java.util.Scanner;
 
-public class User {
+public class User extends DBConn{
     private int id;
     private String email;
     private String password;

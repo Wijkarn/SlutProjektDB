@@ -1,4 +1,4 @@
-import models.CreateTables;
+import database.CreateTables;
 import views.Menu;
 
 import java.sql.SQLException;

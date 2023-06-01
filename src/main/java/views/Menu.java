@@ -1,7 +1,7 @@
 package views;
 
 import controllers.UserController;
-import models.DBConn;
+import database.DBConn;
 import models.User;
 
 import java.util.Scanner;

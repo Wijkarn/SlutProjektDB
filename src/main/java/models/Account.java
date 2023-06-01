@@ -1,9 +1,11 @@
 package models;
 
+import database.DBConn;
+
 import java.sql.*;
 import java.util.Scanner;
 
-public class Account {
+public class Account extends DBConn{
 
     private int accountId;
     private int ownerId;

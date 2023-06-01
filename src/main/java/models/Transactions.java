@@ -1,10 +1,12 @@
 package models;
 
+import database.DBConn;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-public class Transactions {
+public class Transactions extends DBConn{
     private int transactionId;
     private int receiverId;
     private int senderId;

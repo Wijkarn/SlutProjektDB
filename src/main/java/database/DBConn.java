@@ -1,4 +1,4 @@
-package models;
+package database;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 
