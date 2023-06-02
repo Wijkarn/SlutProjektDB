@@ -45,9 +45,8 @@ public abstract class DBConn {
     }
 
     public static void getInfoFromFile() {
-        String filePath = "textfiles/logInInfo.txt";
-
         try {
+            String filePath = "textfiles/logInInfo.txt";
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
             url = reader.readLine();
             port = Integer.parseInt(reader.readLine());

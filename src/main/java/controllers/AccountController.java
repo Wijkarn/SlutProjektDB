@@ -109,13 +109,13 @@ public class AccountController extends DBConn {
         }
     }
 
-    public static boolean getAllAccountsByName(User user) {
+    public static boolean getAllAccountsByPersonnummer(User user) {
         try {
-            String query = "SELECT * FROM accounts WHERE owner_id IN (SELECT id FROM users WHERE name = ?)";
+            String query = "SELECT * FROM accounts WHERE owner_id IN (SELECT id FROM users WHERE personnummer = ?)";
             Connection connection = DBConn.getConnection();
             PreparedStatement prepStatement = connection.prepareStatement(query);
 
-            prepStatement.setString(1, user.getName());
+            prepStatement.setString(1, user.getPersonnummer());
             ResultSet res = prepStatement.executeQuery();
 
             boolean accounts = false;

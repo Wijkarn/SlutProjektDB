@@ -61,6 +61,7 @@ public class UserView {
                         return;
                     }
                 }
+                default -> System.out.println("Something went wrong, please try again.");
             }
         }
     }
@@ -69,13 +70,14 @@ public class UserView {
         try {
             while (true) {
                 String[] target = {"phone", "address", "email", "password"};
-                //System.out.println("What do you want to change?\n1: Phone nr\n2: Address\n3: Email\n4: Password\n5: Back");
+
                 System.out.println("What do you want to change?");
                 int i;
                 for (i = 0; i < target.length; i++) {
                     System.out.println(i + 1 + ": " + target[i]);
                 }
                 System.out.println(i + 1 + ": Back");
+
                 int choice = Integer.parseInt(getUserInput()) - 1;
                 if (choice < target.length) {
                     UserController.changeInfo(target[choice], user);

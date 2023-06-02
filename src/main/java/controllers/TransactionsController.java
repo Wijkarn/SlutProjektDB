@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 
 public class TransactionsController extends DBConn {
 
@@ -20,10 +19,10 @@ public class TransactionsController extends DBConn {
             System.out.println("How much do you want to send?");
             trans.setAmount(Integer.parseInt(UserView.getUserInput()));
 
-            System.out.println("Who do you want to send to? (user name)");
+            System.out.println("Who do you want to send to? (personnummer)");
             User receiverUser = new User();
-            receiverUser.setName(UserView.getUserInput());
-            if (AccountController.getAllAccountsByName(receiverUser)) {
+            receiverUser.setPersonnummer(UserView.getUserInput());
+            if (AccountController.getAllAccountsByPersonnummer(receiverUser)) {
                 System.out.println("To what account? (id)");
                 trans.setReceiverId(Integer.parseInt(UserView.getUserInput()));
 
@@ -99,44 +98,49 @@ public class TransactionsController extends DBConn {
     public static void selectTransactionsBetweenDates(User user) {
         try {
             if (AccountController.getAllAccountsById(user, true)) {
-                System.out.println("Which account do want to see your history?");
                 Transaction trans = new Transaction();
+                System.out.println("Which account do want to see your history?");
+
                 trans.setSenderId(Integer.parseInt(UserView.getUserInput()));
+
                 System.out.println("Start date YYYYMMDD");
-                LocalDate startDate = getDateObj();
+                String startDate = getDate();
 
                 if (startDate != null) {
                     System.out.println("End date YYYYMMDD");
-                    LocalDate endDate = getDateObj();
+                    String endDate = getDate();
+
                     if (endDate != null) {
 
                         Connection connection = DBConn.getConnection();
-                        String query = "SELECT * FROM transactions WHERE (sender_account_id = ? OR receiver_account_id = ?) AND date_sent BETWEEN ? AND ? ORDER BY date_sent ASC";
+                        String query = "SELECT * FROM transactions WHERE (sender_account_id = ? OR receiver_account_id = ?) AND date_sent >= ? AND date_sent <= ? ORDER BY date_sent ASC";
                         PreparedStatement prepStatement = connection.prepareStatement(query);
+
                         prepStatement.setInt(1, trans.getSenderId());
                         prepStatement.setInt(2, trans.getSenderId());
-                        prepStatement.setObject(3, startDate);
-                        prepStatement.setObject(4, endDate);
+                        prepStatement.setString(3, startDate);
+                        prepStatement.setString(4, endDate);
+
                         ResultSet resultSet = prepStatement.executeQuery();
 
                         System.out.println("----------------");
                         while (resultSet.next()) {
-                            int transactionId = resultSet.getInt("id");
-                            LocalDate dateSent = resultSet.getObject("date_sent", LocalDate.class);
-                            int amount = resultSet.getInt("amount");
-                            int receiverId = resultSet.getInt("receiver_account_id");
-                            int senderId = resultSet.getInt("sender_account_id");
+                            Transaction transaction = new Transaction();
 
-                            System.out.println("Transaction ID: " + transactionId);
-                            System.out.println("Date Sent: " + dateSent);
-                            System.out.println("Amount: " + amount);
-                            System.out.println("Sender account id: " + senderId);
-                            System.out.println("Receiver account id: " + receiverId);
+                            transaction.setTransactionId(resultSet.getInt("id"));
+                            transaction.setDate(resultSet.getObject("date_sent", java.sql.Timestamp.class));
+                            transaction.setAmount(resultSet.getInt("amount"));
+                            transaction.setReceiverId(resultSet.getInt("receiver_account_id"));
+                            transaction.setSenderId(resultSet.getInt("sender_account_id"));
+
+                            System.out.println("Transaction ID: " + transaction.getTransactionId());
+                            System.out.println("Date Sent: " + transaction.getDate());
+                            System.out.println("Amount: " + transaction.getAmount());
+                            System.out.println("Sender account id: " + transaction.getSenderId());
+                            System.out.println("Receiver account id: " + transaction.getReceiverId());
                             System.out.println("----------------");
                         }
 
-                        resultSet.close();
-                        prepStatement.close();
                         connection.close();
                     } else {
                         System.out.println("Invalid End Date!");
@@ -152,17 +156,18 @@ public class TransactionsController extends DBConn {
         }
     }
 
-    public static LocalDate getDateObj() {
+    public static String getDate() {
         String userInput = UserView.getUserInput().trim();
 
         if (userInput.length() >= 8 && !userInput.matches(".*[a-z].*")) {
             String fullDate = userInput.replace("-", "");
             fullDate = fullDate.replace("/", "");
-            int year = Integer.parseInt(fullDate.substring(0, 4));
-            int month = Integer.parseInt(fullDate.substring(4, 6));
-            int day = Integer.parseInt(fullDate.substring(6, 8));
 
-            return LocalDate.of(year, month, day);
+            String year = fullDate.substring(0, 4);
+            String month = fullDate.substring(4, 6);
+            String day = fullDate.substring(6, 8);
+
+            return year + "-" + month + "-" + day + " 23:59:59";
         }
         return null;
     }

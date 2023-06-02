@@ -38,16 +38,18 @@ public class UserController extends DBConn {
             System.out.println("Log In");
             System.out.println("Personnummer:");
             checkPw.setString(1, UserView.getUserInput());
-            System.out.println("Password:");
-            String password = UserView.getUserInput();
+            //System.out.println("Password:");
+            //String password = UserView.getUserInput();
 
             ResultSet pw = checkPw.executeQuery();
 
             if (pw.next()) {
                 String hashPassword = pw.getString("password");
+                System.out.println("Password:");
 
-                if (Password.Verify(password, hashPassword)) {
+                if (Password.Verify(UserView.getUserInput(), hashPassword)) {
                     System.out.println("Login successful!");
+
                     int userId = pw.getInt("id");
                     String name = pw.getString("name");
                     String adress = pw.getString("address");
@@ -59,6 +61,7 @@ public class UserController extends DBConn {
                     System.out.println("Welcome " + name + "!");
                     connection.close();
 
+                    connection.close();
                     return new User(userId, name, email, hashPassword, phone, adress, ssn, created);
                 } else {
                     System.out.println("Wrong password!");
@@ -83,7 +86,6 @@ public class UserController extends DBConn {
                 statement.setInt(1, user.getId());
                 statement.executeUpdate();
 
-                statement.close();
                 connection.close();
                 System.out.println("Successfully deleted user account!");
                 return true;
