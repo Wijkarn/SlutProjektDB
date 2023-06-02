@@ -1,34 +1,32 @@
 package controllers;
 
 import database.DBConn;
+import models.Account;
 import models.User;
+import views.UserView;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
 
 public class AccountController extends DBConn {
 
     public static void addAccount(User user) {
         try {
-            Scanner scan = new Scanner(System.in);
-            System.out.println("Account number:");
-            String accNum = scan.nextLine();
-            System.out.println("Balance:");
-            String bal = scan.nextLine();
             String query = "INSERT INTO accounts (owner_id, account_number, balance) VALUES (?, ?, ?)";
             Connection connection = DBConn.getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
+            Account account = new Account();
+            System.out.println("Account number:");
+            account.setAccountNumber(Long.parseLong(UserView.getUserInput()));
 
-            long accNumInt = Long.parseLong(accNum);
-            long balInt = Long.parseLong(bal);
+            System.out.println("Balance:");
+            account.setBalance(Long.parseLong(UserView.getUserInput()));
 
             statement.setInt(1, user.getId());
-            statement.setLong(2, accNumInt);
-            statement.setLong(3, balInt);
-
+            statement.setLong(2, account.getAccountNumber());
+            statement.setLong(3, account.getBalance());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -37,20 +35,21 @@ public class AccountController extends DBConn {
 
     public static void deleteAccount(User user) {
         try {
-            if (getAllAccountsById(user.getId(), true)) {
-                System.out.println("Which account do you want to delete?");
-                Scanner scan = new Scanner(System.in);
-                String accountId = scan.nextLine();
+            if (getAllAccountsById(user, true)) {
                 String query = "DELETE FROM accounts WHERE id = ? AND owner_id = ?";
                 Connection connection = DBConn.getConnection();
                 PreparedStatement prepStatement = connection.prepareStatement(query);
-                prepStatement.setInt(1, Integer.parseInt(accountId));
-                prepStatement.setInt(2, user.getId());
-                int rowsAffected = prepStatement.executeUpdate();
+                Account account = new Account();
+                account.setOwnerId(user.getId());
 
-                if (rowsAffected > 0) {
+                System.out.println("Which account do you want to delete?");
+                account.setAccountId(Integer.parseInt(UserView.getUserInput()));
+
+                prepStatement.setInt(1, account.getAccountId());
+                prepStatement.setInt(2, account.getOwnerId());
+
+                if (prepStatement.executeUpdate() > 0) {
                     System.out.println("Successfully deleted account!");
-
                 } else {
                     System.out.println("Delete unsuccessful!");
                 }
@@ -62,33 +61,32 @@ public class AccountController extends DBConn {
         }
     }
 
-    public static boolean getAllAccountsById(int id, boolean owner) {
+    public static boolean getAllAccountsById(User user, boolean owner) {
         try {
             String query = "SELECT * FROM accounts WHERE owner_id = ?;";
             Connection connection = DBConn.getConnection();
             PreparedStatement prepStatement = connection.prepareStatement(query);
-            prepStatement.setInt(1, id);
+            prepStatement.setInt(1, user.getId());
 
             ResultSet res = prepStatement.executeQuery();
 
-            boolean accounts = false;
             while (res.next()) {
-                int accountId = res.getInt("id");
-                long accountNr = res.getLong("account_number");
+                Account account = new Account();
+                account.setAccountId(res.getInt("id"));
+                account.setAccountNumber(res.getLong("account_number"));
 
-                System.out.print("Id:" + accountId);
+                System.out.print("Id:" + account.getAccountId());
 
                 if (owner) {
-                    System.out.print(" Account nr:" + accountNr);
-                    long bal = res.getLong("balance");
-                    System.out.println(" Balance:" + bal);
+                    System.out.print(" Account nr:" + account.getAccountNumber());
+                    account.setBalance(res.getLong("balance"));
+                    System.out.println(" Balance:" + account.getBalance());
                 } else {
-                    System.out.println(" Account nr:" + accountNr);
+                    System.out.println(" Account nr:" + account.getAccountNumber());
                 }
 
-                accounts = true;
             }
-            return accounts;
+            return res.getFetchSize() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -110,26 +108,26 @@ public class AccountController extends DBConn {
         }
     }
 
-    public static boolean getAllAccountsByName(String name) {
+    public static boolean getAllAccountsByName(User user) {
         try {
             String query = "SELECT * FROM accounts WHERE owner_id IN (SELECT id FROM users WHERE name = ?)";
             Connection connection = DBConn.getConnection();
             PreparedStatement prepStatement = connection.prepareStatement(query);
 
-            prepStatement.setString(1, name);
-
+            prepStatement.setString(1, user.getName());
             ResultSet res = prepStatement.executeQuery();
 
-            boolean yeet = false;
+            boolean accounts = false;
             while (res.next()) {
-                int accountId = res.getInt("id");
-                long accountNr = res.getLong("account_number");
+                Account account = new Account();
+                account.setAccountId(res.getInt("id"));
+                account.setAccountNumber(res.getLong("account_number"));
 
-                System.out.print("Id:" + accountId);
-                System.out.println(" Account nr:" + accountNr);
-                yeet = true;
+                System.out.print("Id:" + account.getAccountId());
+                System.out.println(" Account nr:" + account.getAccountNumber());
+                accounts = true;
             }
-            return yeet;
+            return accounts;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

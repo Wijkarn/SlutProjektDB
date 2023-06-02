@@ -7,7 +7,7 @@ public class Account {
     private int accountId;
     private int ownerId;
     private long balance;
-    private String accountNumber;
+    private long accountNumber;
     private Timestamp created;
 
     public int getAccountId() {
@@ -34,11 +34,11 @@ public class Account {
         this.balance = balance;
     }
 
-    public String getAccountNumber() {
+    public Long getAccountNumber() {
         return accountNumber;
     }
 
-    public void setAccountNumber(String accountNumber) {
+    public void setAccountNumber(long accountNumber) {
         this.accountNumber = accountNumber;
     }
 
@@ -54,7 +54,7 @@ public class Account {
 
     }
 
-    public Account(int accountId, int ownerId, int balance, String accountNumber, Timestamp created) {
+    public Account(int accountId, int ownerId, int balance, long accountNumber, Timestamp created) {
         this.accountId = accountId;
         this.ownerId = ownerId;
         this.balance = balance;

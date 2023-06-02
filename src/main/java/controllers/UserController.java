@@ -6,12 +6,11 @@ import models.User;
 import views.UserView;
 
 import java.sql.*;
-import java.util.Scanner;
 
 public class UserController extends DBConn {
     public static void createUser() {
-        User user = UserView.getUserInput();
-        add(user);
+
+        add(UserView.setUserCredentials());
     }
 
     public static void add(User user) {
@@ -33,20 +32,16 @@ public class UserController extends DBConn {
     }
 
     public static User logIn() {
-        Scanner input = new Scanner(System.in);
         try {
             String checkPassword = "SELECT * FROM users WHERE personnummer = ?;";
-
-            System.out.println("Log In");
-            System.out.println("Personnummer:");
-            String personnummer = input.nextLine();
-
-            System.out.println("Password:");
-            String password = input.nextLine();
-
             Connection connection = DBConn.getConnection();
             PreparedStatement checkPw = connection.prepareStatement(checkPassword);
-            checkPw.setString(1, personnummer);
+            System.out.println("Log In");
+            System.out.println("Personnummer:");
+            checkPw.setString(1, UserView.getUserInput());
+            System.out.println("Password:");
+            String password = UserView.getUserInput();
+
             ResultSet pw = checkPw.executeQuery();
 
             if (pw.next()) {
@@ -65,13 +60,12 @@ public class UserController extends DBConn {
                     System.out.println("Welcome " + name + "!");
                     connection.close();
 
-                    return new User(userId, name, email, password, phone, adress, ssn, created);
+                    return new User(userId, name, email, hashPassword, phone, adress, ssn, created);
                 } else {
                     System.out.println("Wrong password!");
                 }
             } else {
                 System.out.println("Personnummer does not exist!");
-
             }
             connection.close();
             return null;
@@ -84,8 +78,7 @@ public class UserController extends DBConn {
     public static boolean deleteUser(User user) {
         try {
             System.out.println("Are you sure you want to delete your user account and all other data in your account? Y/N WARNING THIS CAN NOT BE UNDONE!");
-            Scanner scan = new Scanner(System.in);
-            if ("y".equalsIgnoreCase(scan.nextLine())) {
+            if ("y".equalsIgnoreCase(UserView.getUserInput())) {
                 String query = "DELETE FROM users WHERE id = ?";
                 Connection connection = DBConn.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -107,25 +100,30 @@ public class UserController extends DBConn {
 
     public static void changeInfo(String choice, User user) {
         try {
-            System.out.println("Are you sure you want to delete " + choice + "?");
-            Scanner scan = new Scanner(System.in);
-            if ("y".equalsIgnoreCase(scan.nextLine())) {
+            System.out.println("Are you sure you want to update " + choice + "? Y/N");
+            if ("y".equalsIgnoreCase(UserView.getUserInput())) {
                 System.out.println("New " + choice + ":");
-                String newData = scan.nextLine();
+                String newData = UserView.getUserInput();
 
                 String query = "UPDATE users SET " + choice + " = ? WHERE id=?;";
                 Connection connection = DBConn.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
 
                 if ("password".equalsIgnoreCase(choice)) {
-                    statement.setString(1, Password.hash(newData));
-                    changingInfoLocally(choice, user, Password.hash(newData));
+                    user.setPassword(Password.hash(newData));
+                    statement.setString(1, user.getPassword());
+                    //changingInfoLocally(choice, user, password);
                 } else if ("phone".equalsIgnoreCase(choice)) {
-                    statement.setLong(1, Long.parseLong(newData));
-                    changingInfoLocally(choice, user, newData);
-                } else {
-                    statement.setString(1, newData);
-                    changingInfoLocally(choice, user, newData);
+                    user.setPhone(newData);
+                    statement.setString(1, user.getPhone());
+                    //changingInfoLocally(choice, user, newData);
+                } else if ("address".equalsIgnoreCase(choice)){
+                    user.setAddress(newData);
+                    statement.setString(1, user.getAddress());
+                    //changingInfoLocally(choice, user, newData);
+                }else if ("email".equalsIgnoreCase(choice)){
+                    user.setEmail(newData);
+                    statement.setString(1,user.getEmail());
                 }
                 statement.setInt(2, user.getId());
 
@@ -133,7 +131,7 @@ public class UserController extends DBConn {
 
                 statement.close();
                 connection.close();
-                System.out.println("Successfully updated " + choice + "! New " + choice + ":" + newData);
+                System.out.println("Successfully updated " + choice + "! New " + choice + ": " + newData);
             } else {
                 System.out.println("Aborting update");
             }

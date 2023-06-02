@@ -8,84 +8,78 @@ import controllers.UserController;
 import models.User;
 
 public class UserView {
-    public static User getUserInput() {
-        Scanner scan = new Scanner(System.in);
+
+    static Scanner scan = new Scanner(System.in);
+
+    public static String getUserInput(){
+        return scan.nextLine();
+    }
+    public static User setUserCredentials() {
         User user = new User();
 
         System.out.print("Name: ");
-        user.setName(scan.nextLine());
+        user.setName(getUserInput());
 
         System.out.print("Personnummer: ");
-        user.setPersonnummer(scan.nextLine());
+        user.setPersonnummer(getUserInput());
 
         System.out.print("Phone: ");
-        user.setPhone(scan.nextLine());
+        user.setPhone(getUserInput());
 
         System.out.print("Email: ");
-        user.setEmail(scan.nextLine());
+        user.setEmail(getUserInput());
 
         System.out.print("Address: ");
-        user.setAddress(scan.nextLine());
+        user.setAddress(getUserInput());
 
         System.out.print("Password: ");
-        user.setPassword(scan.nextLine());
+        user.setPassword(getUserInput());
 
         return user;
     }
 
     public void loginMenu(User user) {
+
         while (true) {
+
             System.out.println("What do you want to do?\n1: Make a transaction\n2: Add bank account\n3: Change user credentials\n4: Show transactions\n5: Delete bank account\n6: View credentials\n10: Log out\n69: Delete user");
 
-            switch (new Scanner(System.in).nextLine().toLowerCase()) {
-                case "1":
-                    TransactionsController.makeTransaction(user);
-                    break;
-                case "2":
-                    AccountController.addAccount(user);
-                    break;
-                case "3":
-                    userChangeMenu(user);
-                    break;
-                case "4":
-                    TransactionsController.selectTransactionsBetweenDates(user);
-                    break;
-                case "5":
-                    AccountController.deleteAccount(user);
-                    break;
-                case "6":
-                    viewCredentials(user);
-                    break;
-                case "10":
+            switch (getUserInput()) {
+                case "1" -> TransactionsController.makeTransaction(user);
+                case "2" -> AccountController.addAccount(user);
+                case "3" -> userChangeMenu(user);
+                case "4" -> TransactionsController.selectTransactionsBetweenDates(user);
+                case "5" -> AccountController.deleteAccount(user);
+                case "6" -> viewCredentials(user);
+                case "10" -> {
                     // Logout
                     return;
-                case "69":
+                }
+                case "69" -> {
                     // Delete user
                     if (UserController.deleteUser(user)) {
                         AccountController.deleteAllAccounts(user);
                         return;
                     }
+                }
             }
         }
     }
 
     private void userChangeMenu(User user) {
-        while (true) {
-            Scanner scan = new Scanner(System.in);
-            System.out.println("What do you want to change?\n1: Phone nr\n2: Address\n3: Email\n4: Password");
-            switch (scan.nextLine()) {
-                case "1":
-                    UserController.changeInfo("phone", user);
-                    break;
-                case "2":
-                    UserController.changeInfo("address", user);
-                    break;
-                case "3":
-                    UserController.changeInfo("email", user);
-                    break;
-                case "4":
-                    UserController.changeInfo("password", user);
-                    break;
+        String[] target = {"phone", "address", "email", "password"};
+        loop : while (true) {
+            System.out.println("What do you want to change?\n1: Phone nr\n2: Address\n3: Email\n4: Password\n5: Back");
+
+            try{
+                int choice = Integer.parseInt(getUserInput()) - 1;
+                if (choice < 4){
+                    new UserController().changeInfo(target[choice], user);
+                } else if( choice == 5 ) {
+                    break loop;
+                }
+            } catch (Exception ignored){
+                System.out.println("Something went wrong, please try again.");
             }
         }
     }
@@ -99,7 +93,7 @@ public class UserView {
         System.out.println("Email: " + user.getEmail());
         System.out.println("User account created: " + user.getCreated());
         System.out.println("Bank accounts: ");
-        AccountController.getAllAccountsById(user.getId(), true);
+        AccountController.getAllAccountsById(user, true);
         System.out.println(" ");
     }
 }

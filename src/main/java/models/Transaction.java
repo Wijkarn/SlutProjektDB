@@ -2,7 +2,7 @@ package models;
 
 import java.sql.*;
 
-public class Transactions {
+public class Transaction {
     private int transactionId;
     private int receiverId;
     private int senderId;
@@ -50,11 +50,11 @@ public class Transactions {
     }
 
 
-    public Transactions() {
+    public Transaction() {
 
     }
 
-    public Transactions(int transactionId, int senderId, int receiverId, int amount, Timestamp date) {
+    public Transaction(int transactionId, int senderId, int receiverId, int amount, Timestamp date) {
         this.transactionId = transactionId;
         this.senderId = senderId;
         this.receiverId = receiverId;

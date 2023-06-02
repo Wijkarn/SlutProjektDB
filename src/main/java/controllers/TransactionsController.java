@@ -1,42 +1,48 @@
 package controllers;
 
 import database.DBConn;
+import models.Transaction;
 import models.User;
+import views.UserView;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Scanner;
 
 public class TransactionsController extends DBConn{
 
     public static void makeTransaction(User user) {
         try {
+            Transaction trans = new Transaction();
             System.out.println("How much do you want to send?");
-            Scanner scan = new Scanner(System.in);
-            int transAmount = Integer.parseInt(scan.nextLine());
+            trans.setAmount(Integer.parseInt(UserView.getUserInput()));
+            //Account acc = new Account();
 
             System.out.println("Who do you want to send to? (user name)");
-            if (AccountController.getAllAccountsByName(scan.nextLine())) {
+            //acc.setOwnerId(Integer.parseInt(scan.nextLine()));
+            User receiverUser = new User();
+            receiverUser.setName(UserView.getUserInput());
+            if (AccountController.getAllAccountsByName(receiverUser)) {
                 System.out.println("To what account? (id)");
-                int receiverAccountId = Integer.parseInt(scan.nextLine());
+                trans.setReceiverId(Integer.parseInt(UserView.getUserInput()));
 
+                User senderUser = new User();
                 System.out.println("From what account? (id)");
-                if (AccountController.getAllAccountsById(user.getId(), true)) {
-                    int senderAccount = Integer.parseInt(scan.nextLine());
-                    boolean yeet = updateSenderBal(transAmount, senderAccount);
+                senderUser.setName(UserView.getUserInput());
+                if (AccountController.getAllAccountsById(user, true)) {
+                    trans.setSenderId(Integer.parseInt(UserView.getUserInput()));
 
-                    if (yeet) {
-                        updateReceiverBal(transAmount, receiverAccountId);
+                    if ( updateSenderBal(trans) ) {
+                        updateReceiverBal(trans);
                         String query = "INSERT INTO transactions (amount, receiver_account_id, sender_account_id) VALUES (?, ?, ?)";
                         Connection connection = DBConn.getConnection();
                         PreparedStatement prepStatement = connection.prepareStatement(query);
 
-                        prepStatement.setInt(1, transAmount);
-                        prepStatement.setInt(2, receiverAccountId);
-                        prepStatement.setInt(3, senderAccount);
+                        prepStatement.setInt(1, trans.getAmount());
+                        prepStatement.setInt(2, trans.getReceiverId());
+                        prepStatement.setInt(3, trans.getSenderId());
 
                         prepStatement.executeUpdate();
                     }
@@ -51,28 +57,22 @@ public class TransactionsController extends DBConn{
         }
     }
 
-    public static boolean updateSenderBal(int amount, int accountId) {
+    public static boolean updateSenderBal(Transaction trans) {
         try {
             String query = "UPDATE accounts SET balance = balance - ? WHERE id = ? AND balance >= ?;";
 
             Connection connection = DBConn.getConnection();
-            connection.setAutoCommit(false);
             PreparedStatement prepStatement = connection.prepareStatement(query);
 
-            prepStatement.setInt(1, amount);
-            prepStatement.setInt(2, accountId);
-            prepStatement.setInt(3, amount);
+            prepStatement.setInt(1, trans.getAmount());
+            prepStatement.setInt(2, trans.getSenderId());
+            prepStatement.setInt(3, trans.getAmount());
 
             int rowsUpdated = prepStatement.executeUpdate();
             if (rowsUpdated > 0) {
-                // Commit the transaction if the update was successful
-                connection.commit();
                 System.out.println("Successful transaction!");
-                connection.setAutoCommit(true);
                 return true;
             } else {
-                // Rollback the transaction if the update failed (insufficient funds or sender account not found)
-                connection.rollback();
                 System.out.println("Transaction failed. Insufficient funds or sender account not found.");
                 return false;
             }
@@ -82,15 +82,15 @@ public class TransactionsController extends DBConn{
         }
     }
 
-    public static void updateReceiverBal(int amount, int accountId) {
+    public static void updateReceiverBal(Transaction trans) {
         try {
             String query = "UPDATE accounts SET balance = balance + ? WHERE id = ?;";
 
             Connection connection = DBConn.getConnection();
             PreparedStatement prepStatement = connection.prepareStatement(query);
 
-            prepStatement.setInt(1, amount);
-            prepStatement.setInt(2, accountId);
+            prepStatement.setInt(1, trans.getAmount());
+            prepStatement.setInt(2, trans.getReceiverId());
 
             prepStatement.executeUpdate();
         } catch (SQLException e) {
@@ -101,10 +101,9 @@ public class TransactionsController extends DBConn{
     public static void selectTransactionsBetweenDates(User user) {
         try {
             System.out.println("Which account do want to see your history?");
-
-            if (AccountController.getAllAccountsById(user.getId(), true)) {
-                Scanner scan = new Scanner(System.in);
-                int accountId = scan.nextInt();
+            Transaction trans = new Transaction();
+            if (AccountController.getAllAccountsById(user, true)) {
+                trans.setSenderId(Integer.parseInt(UserView.getUserInput()));
                 System.out.println("Start date YYYYMMDD");
                 LocalDate startDate = getDateObj();
 
@@ -115,12 +114,12 @@ public class TransactionsController extends DBConn{
 
                         Connection connection = DBConn.getConnection();
                         String query = "SELECT * FROM transactions WHERE (sender_account_id = ? OR receiver_account_id = ?) AND date_sent BETWEEN ? AND ? ORDER BY date_sent ASC";
-                        PreparedStatement statement = connection.prepareStatement(query);
-                        statement.setInt(1, accountId);
-                        statement.setInt(2, accountId);
-                        statement.setObject(3, startDate);
-                        statement.setObject(4, endDate);
-                        ResultSet resultSet = statement.executeQuery();
+                        PreparedStatement prepStatement = connection.prepareStatement(query);
+                        prepStatement.setInt(1, trans.getSenderId());
+                        prepStatement.setInt(2, trans.getSenderId());
+                        prepStatement.setObject(3, startDate);
+                        prepStatement.setObject(4, endDate);
+                        ResultSet resultSet = prepStatement.executeQuery();
 
                         System.out.println("----------------");
                         while (resultSet.next()) {
@@ -139,7 +138,7 @@ public class TransactionsController extends DBConn{
                         }
 
                         resultSet.close();
-                        statement.close();
+                        prepStatement.close();
                         connection.close();
                     } else {
                         System.out.println("Invalid End Date!");
@@ -156,8 +155,7 @@ public class TransactionsController extends DBConn{
     }
 
     public static LocalDate getDateObj() {
-        Scanner scan = new Scanner(System.in);
-        String userInput = scan.nextLine();
+        String userInput = UserView.getUserInput().trim();
 
         if (userInput.length() >= 8 && !userInput.matches(".*[a-z].*")) {
             String fullDate = userInput.replace("-", "");

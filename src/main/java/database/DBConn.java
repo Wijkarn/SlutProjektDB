@@ -58,8 +58,4 @@ public abstract class DBConn {
             e.printStackTrace();
         }
     }
-
-    protected MysqlDataSource getDataSource() {
-        return dataSource;
-    }
 }
