@@ -38,8 +38,6 @@ public class UserController extends DBConn {
             System.out.println("Log In");
             System.out.println("Personnummer:");
             checkPw.setString(1, UserView.getUserInput());
-            //System.out.println("Password:");
-            //String password = UserView.getUserInput();
 
             ResultSet pw = checkPw.executeQuery();
 
@@ -61,7 +59,6 @@ public class UserController extends DBConn {
                     System.out.println("Welcome " + name + "!");
                     connection.close();
 
-                    connection.close();
                     return new User(userId, name, email, hashPassword, phone, adress, ssn, created);
                 } else {
                     System.out.println("Wrong password!");
