@@ -7,9 +7,7 @@ import models.User;
 import java.util.Scanner;
 
 public class Menu extends DBConn {
-
     public static void menu() {
-
         while (true) {
             System.out.println("What do you want to do?\n1: Log in\n2: Create new user\n3: Quit");
             switch (new Scanner(System.in).nextLine()) {

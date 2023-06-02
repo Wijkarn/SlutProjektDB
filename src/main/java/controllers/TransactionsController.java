@@ -1,6 +1,7 @@
 package controllers;
 
 import database.DBConn;
+import models.Account;
 import models.Transaction;
 import models.User;
 import views.UserView;
@@ -11,30 +12,28 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-public class TransactionsController extends DBConn{
+public class TransactionsController extends DBConn {
 
     public static void makeTransaction(User user) {
         try {
             Transaction trans = new Transaction();
             System.out.println("How much do you want to send?");
             trans.setAmount(Integer.parseInt(UserView.getUserInput()));
-            //Account acc = new Account();
 
             System.out.println("Who do you want to send to? (user name)");
-            //acc.setOwnerId(Integer.parseInt(scan.nextLine()));
             User receiverUser = new User();
             receiverUser.setName(UserView.getUserInput());
             if (AccountController.getAllAccountsByName(receiverUser)) {
                 System.out.println("To what account? (id)");
                 trans.setReceiverId(Integer.parseInt(UserView.getUserInput()));
 
-                User senderUser = new User();
-                System.out.println("From what account? (id)");
-                senderUser.setName(UserView.getUserInput());
                 if (AccountController.getAllAccountsById(user, true)) {
-                    trans.setSenderId(Integer.parseInt(UserView.getUserInput()));
+                    Account senderAccount = new Account();
+                    System.out.println("From what account? (id)");
+                    senderAccount.setAccountId(Integer.parseInt(UserView.getUserInput()));
+                    trans.setSenderId(senderAccount.getAccountId());
 
-                    if ( updateSenderBal(trans) ) {
+                    if (updateSenderBal(trans)) {
                         updateReceiverBal(trans);
                         String query = "INSERT INTO transactions (amount, receiver_account_id, sender_account_id) VALUES (?, ?, ?)";
                         Connection connection = DBConn.getConnection();
@@ -76,7 +75,6 @@ public class TransactionsController extends DBConn{
                 System.out.println("Transaction failed. Insufficient funds or sender account not found.");
                 return false;
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -100,9 +98,9 @@ public class TransactionsController extends DBConn{
 
     public static void selectTransactionsBetweenDates(User user) {
         try {
-            System.out.println("Which account do want to see your history?");
-            Transaction trans = new Transaction();
             if (AccountController.getAllAccountsById(user, true)) {
+                System.out.println("Which account do want to see your history?");
+                Transaction trans = new Transaction();
                 trans.setSenderId(Integer.parseInt(UserView.getUserInput()));
                 System.out.println("Start date YYYYMMDD");
                 LocalDate startDate = getDateObj();

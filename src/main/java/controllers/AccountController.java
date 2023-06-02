@@ -70,6 +70,7 @@ public class AccountController extends DBConn {
 
             ResultSet res = prepStatement.executeQuery();
 
+            boolean accounts = false;
             while (res.next()) {
                 Account account = new Account();
                 account.setAccountId(res.getInt("id"));
@@ -84,9 +85,9 @@ public class AccountController extends DBConn {
                 } else {
                     System.out.println(" Account nr:" + account.getAccountNumber());
                 }
-
+                accounts = true;
             }
-            return res.getFetchSize() > 0;
+            return accounts;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

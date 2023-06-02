@@ -49,7 +49,6 @@ public class Transaction {
         this.date = date;
     }
 
-
     public Transaction() {
 
     }

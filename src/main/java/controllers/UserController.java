@@ -9,11 +9,10 @@ import java.sql.*;
 
 public class UserController extends DBConn {
     public static void createUser() {
-
-        add(UserView.setUserCredentials());
+        addUser(UserView.setUserCredentials());
     }
 
-    public static void add(User user) {
+    public static void addUser(User user) {
         try {
             Connection connection = DBConn.getConnection();
             String query = "INSERT INTO users (name, email, phone, address, password, personnummer) VALUES (?, ?, ?, ?, ?, ?);";
@@ -25,9 +24,9 @@ public class UserController extends DBConn {
             statement.setString(5, Password.hash(user.getPassword()));
             statement.setString(6, user.getPersonnummer());
 
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            if (statement.executeUpdate() > 0) System.out.println("Successfully created user!");
+        } catch (SQLException ignored) {
+            System.out.println("An error occurred creating user.");
         }
     }
 
@@ -69,7 +68,6 @@ public class UserController extends DBConn {
             }
             connection.close();
             return null;
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -109,51 +107,35 @@ public class UserController extends DBConn {
                 Connection connection = DBConn.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query);
 
-                if ("password".equalsIgnoreCase(choice)) {
-                    user.setPassword(Password.hash(newData));
-                    statement.setString(1, user.getPassword());
-                    //changingInfoLocally(choice, user, password);
-                } else if ("phone".equalsIgnoreCase(choice)) {
-                    user.setPhone(newData);
-                    statement.setString(1, user.getPhone());
-                    //changingInfoLocally(choice, user, newData);
-                } else if ("address".equalsIgnoreCase(choice)){
-                    user.setAddress(newData);
-                    statement.setString(1, user.getAddress());
-                    //changingInfoLocally(choice, user, newData);
-                }else if ("email".equalsIgnoreCase(choice)){
-                    user.setEmail(newData);
-                    statement.setString(1,user.getEmail());
+                switch (choice) {
+                    case "password" -> {
+                        user.setPassword(Password.hash(newData));
+                        statement.setString(1, user.getPassword());
+                    }
+                    case "phone" -> {
+                        user.setPhone(newData);
+                        statement.setString(1, user.getPhone());
+                    }
+                    case "address" -> {
+                        user.setAddress(newData);
+                        statement.setString(1, user.getAddress());
+                    }
+                    case "email" -> {
+                        user.setEmail(newData);
+                        statement.setString(1, user.getEmail());
+                    }
                 }
                 statement.setInt(2, user.getId());
 
                 statement.executeUpdate();
 
-                statement.close();
                 connection.close();
-                System.out.println("Successfully updated " + choice + "! New " + choice + ": " + newData);
+                System.out.println("Successfully updated " + choice + "!");
             } else {
                 System.out.println("Aborting update");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public static void changingInfoLocally(String choice, User user, String newData) {
-        switch (choice) {
-            case "phone":
-                user.setPhone(newData);
-                break;
-            case "email":
-                user.setEmail(newData);
-                break;
-            case "password":
-                user.setPassword(newData);
-                break;
-            case "address":
-                user.setAddress(newData);
-                break;
         }
     }
 }

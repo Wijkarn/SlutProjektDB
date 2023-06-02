@@ -11,9 +11,7 @@ public class User extends DBConn {
     private String name;
     private String phone;
     private String address;
-
     private Timestamp created;
-
     private String personnummer;
 
     public User() {
