@@ -3,3 +3,9 @@ localhost
 SlutProjekt
 root
 Omegalul69
+----------
+Row 1 url
+Row 2 port
+Row 3 DB name
+Row 4 username
+Row 5 password
